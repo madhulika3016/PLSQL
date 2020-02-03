@@ -1,0 +1,15 @@
+satyen.nande@capgemini.com
+
+Table descriptions 
+ 
+Emp 
+ 
+Name  Null?  Type  Empno Not Null Number(4) Ename - Varchar2(10) job    Varchar2(9) mgr    Number(4) Hiredate    Date Sal - Number(7,2) Comm - Number(7,2) Deptno - Number(2) 
+
+
+declare 
+ name varchar2(10);
+ begin
+ select ename into name from emp13;
+ DBMS_OUTPUT.PUT_LINE(name);
+ end;

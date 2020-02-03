@@ -1,0 +1,49 @@
+create table Designation_Masters(Design_code  Number(3) not null, Design_name  Varchar2(50));
+
+insert into DESIGNATION_MASTERS values(103,'trainee');
+insert into DESIGNATION_MASTERS values(104,'teamlead');
+
+select * from DESIGNATION_MASTERS;
+
+create table Department_Masters(Dept_Code Number(2) not null, Dept_name  Varchar2(50));
+
+insert into DEPARTMENT_MASTERS values(30,'HR');
+ insert into DEPARTMENT_MASTERS values(40,'Finance');
+ 
+ select * from DEPARTMENT_MASTERS;
+ 
+ 
+create table Student_Masters(Student_Code Number(6)  Not Null, Student_name  Varchar2(50) Not Null,
+ Dept_Code    Number(2),Student_dob    Date, Student_Address    Varchar2(240));
+ 
+ insert into STUDENT_MASTERS values(110001,'ravi',10,'21-02-98','delhi');
+ insert into STUDENT_MASTERS values(110003,'viraj',20,'06-05-98','pune');
+ 
+ select * from STUDENT_MASTERS;
+ 
+ create table Student_Marks(Student_Code  Number(6), Student_Year Number not null,
+Subject1  Number(3) ,Subject2  Number(3) ,Subject3  Number(3));
+ insert into STUDENT_MARKS values(110003,4,75,67,86);
+ 
+ select * from STUDENT_MARKS;
+ 
+ create table Staff_Masters(Staff_code Number(8) not null, Staff_Name  Varchar2(50) not null,
+ Design_code  Number, Dept_code  Number, HireDate  Date, Staff_dob  Date ,
+Staff_address  Varchar2(240) ,Mgr_code  Number(8) ,Staff_sal  Number (10,2));
+ 
+ insert into STAFF_MASTERS values(11000008,'rajesh',333,33,'21-01-02','15-02-81','pune',11000000,200000);
+  select * from STAFF_MASTERS;
+  
+ create table  Book_Masters (Book_Code  Number(10) not null, Book_Name Varchar2(50) not null ,
+Book_pub_year  Number ,Book_pub_author  Varchar2(50) not null);
+ 
+ insert into BOOK_MASTERS values(234,'java',2013,'madhulika');
+ 
+ select * from BOOK_MASTERS;
+ 
+ create table Book_Transactions(Book_Code  Number, Student_code  Number, Staff_code  Number,
+Book_Issue_date Date not null, Book_expected_return_date  Date not null,
+Book_actual_return_date  Date );
+
+insert into BOOK_TRANSACTIONS values(234,110002,11000001,'19-02-20','25-02-20','29-02-20');
+ select * from BOOK_TRANSACTIONS;

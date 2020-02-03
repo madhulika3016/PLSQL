@@ -1,0 +1,478 @@
+create table dept_pro as select * from dept;
+
+create or replace procedure add_dept is
+dno dept.deptno%type;
+dnm dept.dname%type;
+begin
+dno:=50;
+dnm:='IT_MGR';
+insert into dept values(dno, dnm, null);
+dbms_output.put_line('Inserted '||sql%rowcount||' row');
+end;
+/
+
+
+SQL> BEGIN
+  2  ADD_DEPT;
+  3  END;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+
+SQL> SELECT * FROM DEPT WHERE DEPTNO=50;
+
+    DEPTNO DNAME          LOC
+---------- -------------- -------------
+        50 IT_MGR
+
+
+=================================================================================================
+
+----------(SHOW ERROR)
+
+SQL> select OBJECT_NAME, OBJECT_TYPE from user_objects where OBJECT_TYPE='PROCEDURE';
+
+SQL> COL OBJECT_NAME FOR A30
+SQL> /
+
+OBJECT_NAME                    OBJECT_TYPE
+------------------------------ -----------------------
+ADD_DEPT                       PROCEDURE
+
+
+
+SQL> COL NAME FOR A30
+SQL> COL TEXT FOR A30
+SQL> SELECT NAME, TEXT FROM USER_SOURCE;
+
+
+NAME                           TEXT
+------------------------------ ------------------------------
+
+ADD_DEPT                       procedure add_dept is
+ADD_DEPT                       dno dept.deptno%type;
+ADD_DEPT                       dnm dept.dname%type;
+ADD_DEPT                       begin
+ADD_DEPT                       dno:=50;
+ADD_DEPT                       dnm:='IT_MGR';
+ADD_DEPT                       insert into dept values(dno, d
+                               nm, null);
+
+
+NAME                           TEXT
+------------------------------ ------------------------------
+ADD_DEPT                       dbms_output.put_line('Inserted
+                                '||sql%rowcount||' row');
+
+ADD_DEPT                       end;
+
+
+
+==================================================================================
+
+create or replace procedure p1
+as
+begin
+insert into temp values(1, 'procedure 1', systimestamp);
+end;
+/
+
+execute p1;
+
+select * from temp;
+
+create user xyz identified by xyz;
+grant select on temp to xyz;
+grant execute on scott.p1 to xyz;
+
+login as xyz--> execute scott.p1;
+
+====================================================================================
+
+
+create or replace procedure emp_hist
+(pid in emp.empno%type,
+pname out emp.ename%type,
+psal out emp.sal%type,
+pdno out emp.deptno%type)
+is
+begin
+select ename, sal, deptno into pname, psal, pdno
+from emp
+where empno=pid;
+end;
+/
+
+
+exec emp_hist(7900, :pname, :psal, :pdno);
+
+SQL> variable pnm varchar2(20);
+SQL> variable psal number;
+SQL> variable pdno number;
+SQL> 
+SQL> print pnm;
+
+PNM
+--------------------------------
+
+
+SQL> exec emp_hist(7900, :pnm, :psal, :pdno);
+
+PL/SQL procedure successfully completed.
+
+SQL> print pnm;
+
+PNM
+--------------------------------
+JAMES
+
+SQL> print psal;
+
+      PSAL
+----------
+       950
+
+SQL> print pdno;
+
+      PDNO
+----------
+	30
+
+========================================================================================
+
+declare
+pid number:=7499;
+pnm varchar2(20);
+begin
+emp_hist(pid, :pnm, :psal, :pdno);
+end;
+/
+
+print pnm;
+
+
+SQL> declare
+pid number:=7499;
+pnm varchar2(20);
+begin
+emp_hist(pid, :pnm, :psal, :pdno);
+end;
+/  2    3    4    5    6    7  
+
+PL/SQL procedure successfully completed.
+
+SQL> print pnm;
+
+PNM
+--------------------------------
+ALLEN
+============================================================================================
+
+SQL> create or replace procedure phone
+  2  (ph_no in out varchar2)
+is
+  3    4  begin
+  5  ph_no:='('||substr(ph_no,1,3)||')'||substr(ph_no, 4, 3)||'-'||substr(ph_no,7);
+  6  end phone;
+  7  /
+
+Procedure created.
+
+SQL> begin
+  2  :ph_no:='9987654321';
+  3  end;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> print ph_no;
+
+PH_NO
+--------------------------------
+9987654321
+
+SQL> exec phone(:ph_no);
+
+PL/SQL procedure successfully completed.
+
+SQL> print ph_no;
+
+PH_NO
+--------------------------------
+(998)765-4321
+
+SQL> variable ph_no varchar2(20);
+SQL> begin
+  2  :ph_no:='9987654321';
+  3  end;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> print ph_no;
+
+PH_NO
+--------------------------------
+9987654321
+
+===========================================================================================================
+
+Interview questions:
+
+1.What is Stored Procedure? ( 100% asked Stored Procedure Interview Questions )
+
+Answer:
+
+Stored procedures are nothing but named blocks which contains the group of SQL statements to achieve specific 
+functionality.A stored procedure or in simple a proc is a named PL/SQL block which performs one or more specific 
+task. This is similar to a procedure in other programming languages.Stored Procedures accepts the different input 
+parameters and gives the result as per requirement of user. PL/SQL is executed in the database, you can include SQL 
+statements in your code without having to establish a separate connection.Stored Procedure reduces the network 
+traffic and improves the system performance.Stored procedures are used to ensure the data integrity of database.
+
+2.What is basic Syntax of Stored Procedure in PL SQL?( 100% asked Stored Procedure Interview Questions )
+
+Answer:
+
+The PL SQL procedure have following syntax :
+
+CREATE OR REPLACE procedure_name(arg1 data_type, …)
+is
+EGIN ….
+
+SQL_Statements……
+
+END procedure_name;
+
+CREATE OR REPLACE : This keyword is used to create or replace the database object.
+
+IS/AS :  These are keywords which indicates the start of procedure.
+
+SQL Statements: These are nothing but set of SQL statements where actual business logic is written.
+
+3.What is the basic difference between IS/AS in SQL Stored Procedure?
+Answer:
+
+Both ‘IS’ and ‘AS’  are equivalent to each other. There is no difference between IS and AS in SQL Stored procedure.
+
+4.What is difference between anonymous block and Stored Procedure?
+
+Answer:
+
+Anonymous blocks are nothing but the PL SQL statements which are written in between begin and end which is not stored in to Database Memory. Stored Procedures are named block which are stored in to Database memory as database objects.
+
+5.Where the stored procedures are stored in database?
+
+Answer:
+
+Stored Procedure is a subroutine available to applications accessing a relational database system. Stored Procedures (sometimes called a proc, sproc, StoPro, or SP) are actually stored in the database data dictionary.
+
+6.What are different types of Stored Procedures?
+Answer:
+
+There are two types of Stored Procedures:
+
+1.User Defined Procedures : This category includes the code written by developers.
+
+2.System Stored Procedures:  These are stored procedures which are already written scripts in Oracle. User just needs to run that procedure.
+
+3.Extended Procedure
+
+4.CLR Stored Procedure.
+
+7.What are different usages of Stored Procedure? ( 100% asked Stored Procedure Interview Questions )
+
+Answer:
+
+Stored Procedures are named blocks which are used to add the business logic to different programs.Procedures are used in data validation most of the times. If there is a functional requirement where user needs to validate the data according to the customer requirement then this logic is been added in Stored Procedure.Complex Functionalities needs huge amount of data to be processed.Stored Procedures are used to process huge amount of data at a same time.Following are bullet points of usages of Stored Procedure:
+
+1.Data Validation Purpose
+
+2.Huge Data Processsing
+
+3.Improve System Performance
+
+4.Adding complex logic centralized
+
+5.Access Control Mechanism
+
+
+
+8.What is difference between Stored Procedure and Function?
+
+9.Can Procedures called inside functions? Yes or No Why?
+
+Answer:
+
+1. Stored Procedure may contain DML statements.
+
+2. Function can’t contain DML statements.
+So executing Function inside stored procedure will never break rule 1.
+But executing stored procedure inside function may break rule no 2.
+
+10.Can We call Stored Procedure inside Stored Procedure?
+
+Answer:
+
+Yes we can call Stored Procedure inside Stored Procedure.
+11.What is recursive Stored Procedure?
+
+Answer:
+
+The Stored Procedures which are used to perform repetitive tasks are called as recursive stored procedures.Recursive feature is disabled by default but can be activated by using the following command on the server max_sp_recursion_depth, also don?t forget to rename the system variable to a non zero variable.
+
+12.What are different extensions for Stored Procedures?( 100% asked Stored Procedure Interview Questions )
+
+Answer:
+
+Most of the database systems have proprietary and vendor based extensions. Microsoft allows procedures to be written using Transact-SQL. Oracle calls its extension as PL/SQL. DB2 has its extension as PL/SQL. PL/pgSQL is the extension used by PostgreSQL SQL and this allows users to have their own functional language such as pl/PHP and pl/Perl.
+
+13.Does the data stored in stored procedure increase access time or execution time? Explain.
+
+Answer:
+
+Data stored in stored procedures can be retrieved much faster than the data stored in SQL database. Data can be precompiled and stored in Stored procedures. This reduces the time gap between query and compiling as the data has been precompiled and stored in the procedure. To avoid repetitive nature of the data base statement caches are used.
+
+14.Can someone able to call DDL in Stored Procedure?( 100% asked Stored Procedure Interview Questions )
+
+Answer:
+
+Yes we can call the DDL statement in Stored Procedure. Using Execute Immediate we can call the DDL statements in Stored Procedures.
+
+15.What are external procedures and when they are used?
+
+Answer:
+
+External procedures are Extended stored procedures only. They let you create your own external routines in a programming language such as C. Extended stored procedures are DLLs that an instance of Microsoft SQL Server can dynamically load and run.Extended stored procedures run directly in the address space of an instance of SQL Server and are programmed by using the SQL Server Extended 
+
+Stored Procedure API.
+
+16.What are advantages of Stored Procedure?
+
+Answer:
+
+There are following advantages of Stored Procedures:
+
+1.Reduce Network usage between Client and Server.
+
+2.Improved Security
+
+3.Fast Data Processing
+
+4.Performance Tuning of Application
+
+5.Reduced Development cost and increase relibility
+
+6.Encapsulating the different complex logic
+
+7.Security
+
+17.What is mean by implementing the Business Logic in stored procedure?( 100% asked Stored Procedure Interview Questions )
+
+Answer:
+
+Stored procedures implement business logic into the database. It is embedded as API and this reduces the implementation of Logic code again explicitly. Implementation of business logic internally reduces the chances of data becoming corrupt.
+
+18.What are different parameters of Stored Procedures?( 100% asked Stored Procedure Interview Questions )
+
+Answer:
+
+We can pass parameters to procedures in three ways.
+1) IN-parameters
+2) OUT-parameters
+3) IN OUT-parameters
+
+19.Can Procedure contain return value?
+
+Answer:
+
+Procedure may or may not contain return value. Function must return the value.
+
+20.How one can execute the procedure?
+
+Answer:
+
+There are two ways to execute a procedure.
+
+1) From the SQL prompt.
+
+ EXECUTE [or EXEC] procedure_name;
+2) Within another procedure – simply use the procedure name.
+
+procedure_name;
+21.How to delete procedure?
+
+Answer:
+
+There are two ways to delete specific procedure:
+
+1.By using the Editor :
+
+By using any SQL editor (toad,SQL developer) user can delete procedure by right clicking the procedure name and choose delete option.
+
+2.By using Command :
+
+Using following command user can delete procedure.
+
+Drop procedure Procedure_name;
+
+22.Explain different modes of procedures?
+
+Answer:
+
+There are 3 different modes of Procedure:
+
+1.In
+
+2.Out
+
+3.In/Out
+
+1.In mode :
+
+An IN parameter lets you pass a value to the subprogram. It is a read-only parameter. Inside the subprogram, an IN parameter acts like a constant. It cannot be assigned a value. You can pass a constant, literal, initialized variable, or expression as an IN parameter. You can also initialize it to a default value; however, in that case, it is omitted from the subprogram call. It is the default mode of parameter passing. Parameters are passed by reference.
+
+2.Out mode:
+
+An OUT parameter returns a value to the calling program. Inside the subprogram, an OUT parameter acts like a variable. You can change its value and reference the value after assigning it. The actual parameter must be variable and it is passed by value.
+
+3.In/Out mode:
+
+An IN OUT parameter passes an initial value to a subprogram and returns an updated value to the caller. It can be assigned a value and the value can be read.
+
+The actual parameter corresponding to an IN OUT formal parameter must be a variable, not a constant or an expression. Formal parameter must be assigned a value. Actual parameter is passed by value.
+
+23.Explain IN/OUT mode with example?
+
+Answer:
+
+An IN OUT parameter passes an initial value to a subprogram and returns an updated value to the caller. It can be assigned a value and the value can be read.
+
+Following is the example of IN/OUT mode:
+
+DECLARE 
+a number; 
+b number; 
+c number;
+PROCEDURE findMax(x IN number, y IN number, z OUT number) IS 
+BEGIN 
+IF x > y THEN 
+z:= x; 
+ELSE 
+z:= y; 
+END IF; 
+END;   
+BEGIN 
+a:= 147; 
+b:= 457; 
+findMax(a, b, c); 
+dbms_output.put_line(' The maximum of (147, 457) : ' || c); 
+END; 
+/
+
+When the above code is executed at the SQL prompt, it produces the following result -
+
+The maximum of (147, 457) : 457  
+PL/SQL procedure successfully completed. 
+

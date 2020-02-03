@@ -1,0 +1,312 @@
+create or replace function fabc(y number)
+return number
+as 
+begin
+return y*y;
+end;
+/
+
+Function created.
+
+SQL> select fabc(10) from dual;
+
+  FABC(10)
+----------
+       100
+
+
+declare
+x number(4);
+begin
+x:=fabc(10);
+insert into temp values(x, 'Function value', systimestamp);
+end;
+/
+
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from temp;
+
+        ID VALUE
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+       100 Function value
+25-MAY-18 11.57.25.950442 AM
+
+==========================================================================================
+
+create or replace function pqr(y number) return boolean
+as
+begin
+if y>5000 then
+return true;
+else 
+return false;
+end if;
+end;
+/
+
+select fabc(10) from dual;
+
+select pqr(7000) from dual;
+
+declare
+x number(4);
+begin
+x:=&x;
+if pqr(x) then
+dbms_output.put_line(x ||' > 5000');
+else
+dbms_output.put_line(x ||' < 5000');
+end if;
+end;
+/
+
+==========================================================================================
+
+
+create or replace function check_sal return boolean is
+did emp.deptno%type;
+eid emp.empno%type;
+salary emp.sal%type;
+avg_sal emp.sal%type;
+begin
+eid:=&id;
+select sal, deptno into salary, did 
+from emp where empno=eid;
+select avg(sal) into avg_sal
+from emp
+where deptno=did;
+if salary>avg_sal then
+return true;
+else 
+return false;
+end if; 
+exception when no_data_found then
+return null;
+end;
+/
+
+
+begin
+if (check_sal is null) then
+dbms_output.put_line('Function returned NULL. No such Employee.');
+elsif (check_sal) then
+dbms_output.put_line('Salary > Average');
+else
+dbms_output.put_line('Salary < Average');
+end if;
+end;
+/
+
+Salary < Average
+
+PL/SQL procedure successfully completed.
+
+SQL> select sal from emp where empno=7900;
+
+       SAL
+----------
+       950
+
+==========================================================================================
+Passing parameter in the function:
+
+create or replace function checksal(eno emp.empno%type) 
+return boolean 
+as
+did emp.deptno%type;
+salary emp.sal%type;
+avgsal emp.sal%type;
+begin
+select sal, deptno into salary, did
+from emp
+where empno=eno;
+select avg(sal) into avgsal
+from emp 
+where deptno=did;
+if salary>avgsal then
+return true;
+else 
+return false;
+end if;
+exception
+when no_data_found then
+dbms_output.put_line('No such employee');
+end;
+/
+
+Calling Function in begin :-
+i)
+begin
+dbms_output.put_line('Checking Salary of employee 7900..');
+if (checksal(7900) is null) then
+dbms_output.put_line('Function returned NULL due to exception.');
+elsif (checksal(7900)) then
+dbms_output.put_line('Salary > Average');
+else
+dbms_output.put_line('Salary < Average');
+end if;
+dbms_output.put_line('Checking Salary of employee 7499..');
+if (checksal(7499) is null) then
+dbms_output.put_line('Function returned NULL due to exception.');
+elsif (checksal(7499)) then
+dbms_output.put_line('Salary > Average');
+else
+dbms_output.put_line('Salary < Average');
+end if;
+end;
+/
+
+ii)
+declare
+salary emp.sal%type;
+name emp.ename%type;
+eid emp.empno%type;
+avgsal emp.sal%type;
+did emp.deptno%type;
+begin
+dbms_output.put_line('--------------------------------');
+select ename, sal into name, salary from emp where empno=&eid;
+dbms_output.put_line('Employee is '||name ||' Salary is '||salary);
+dbms_output.put_line('Checking Salary of employee....');
+if (checksal(7900) is null) then
+dbms_output.put_line('Function returned NULL due to exception.');
+elsif (checksal(7900)) then
+dbms_output.put_line('Salary > Average');
+else
+dbms_output.put_line('Salary < Average');
+end if;
+dbms_output.put_line('--------------------------------');
+select ename, sal into name, salary from emp where empno=&eid;
+dbms_output.put_line('Employee is '||name ||' Salary is '||salary);
+dbms_output.put_line('Checking Salary of employee....');
+if (checksal(7499) is null) then
+dbms_output.put_line('Function returned NULL due to exception.');
+elsif (checksal(7499)) then
+dbms_output.put_line('Salary > Average');
+else
+dbms_output.put_line('Salary < Average');
+end if;
+end;
+/
+
+
+Enter value for eid: 7900
+old   7: select ename, sal into name, salary from emp where empno=&eid;
+new   7: select ename, sal into name, salary from emp where empno=7900;
+Enter value for eid: 7499
+old  18: select ename, sal into name, salary from emp where empno=&eid;
+new  18: select ename, sal into name, salary from emp where empno=7499;
+--------------------------------
+Employee is JAMES Salary is 950
+Checking Salary of employee....
+Salary < Average
+--------------------------------
+Employee is ALLEN Salary is 1600
+Checking Salary of employee....
+Salary > Average
+
+PL/SQL procedure successfully completed.
+
+SQL> select deptno, avg(sal) from emp group by deptno;
+
+    DEPTNO   AVG(SAL)
+---------- ----------
+        30 1566.66667
+        20       2175
+        10 2916.66667
+
+SQL> select empno, ename, sal, deptno from emp where ename in('ALLEN', 'JAMES');
+
+     EMPNO ENAME             SAL     DEPTNO
+---------- ---------- ---------- ----------
+      7499 ALLEN            1600         30
+      7900 JAMES             950         30
+
+=====================================================================================================================
+
+
+create or replace function tax(sal in number)
+return number is
+begin
+return(sal*0.30);
+end tax;
+/
+
+
+Function created.
+
+SQL> select empno, ename, sal, tax(sal) from emp where deptno=10;
+
+     EMPNO ENAME             SAL   TAX(SAL)
+---------- ---------- ---------- ----------
+      7782 CLARK            2450        735
+      7839 KING             5000       1500
+      7934 MILLER           1300        390
+
+======================================================================================================================
+
+
+create or replace function emp_history
+(eid in emp.empno%type,
+name out emp.ename%type,
+salary out emp.sal%type,
+dno out emp.deptno%type)
+return number 
+is
+begin
+select ename, sal, deptno into name, salary, dno 
+from emp
+where empno=eid;
+return 0;
+end emp_history;
+/
+
+variable e_name varchar2(20);
+variable e_sal number;
+variable e_comm number;
+
+declare 
+x number;
+begin
+x:=emp_history(7900, :e_name, :e_sal, :e_comm);
+end;
+/
+
+
+print e_name;
+print e_sal;
+print e_comm;
+
+
+PL/SQL procedure successfully completed.
+
+SQL> print e_name;
+
+E_NAME
+--------------------------------
+JAMES
+
+SQL> print e_sal;
+
+     E_SAL
+----------
+       950
+
+SQL> print e_comm;
+
+    E_COMM
+----------
+        30
+
+SQL> select ename, sal, comm from emp where empno=7900;
+
+ENAME             SAL       COMM
+---------- ---------- ----------
+JAMES             950
+
+=====================================================================================================================
+

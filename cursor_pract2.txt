@@ -1,0 +1,377 @@
+set serveroutput on;
+
+SQL> declare
+cursor c1 is select * from emp;
+x emp%rowtype;
+begin
+open c1;
+for y in 1..10
+loop
+fetch c1 into x;
+insert into temp values(x.empno, x.ename, systimestamp);
+end loop;
+close c1;
+end;
+/
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from temp;
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7369 SMITH
+25-APR-18 08.52.28.617135 AM
+
+      7499 ALLEN
+25-APR-18 08.52.28.617812 AM
+
+      7521 WARD
+25-APR-18 08.52.28.617876 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7566 JONES
+25-APR-18 08.52.28.618040 AM
+
+      7654 MARTIN
+25-APR-18 08.52.28.618175 AM
+
+      7698 BLAKE
+25-APR-18 08.52.28.618224 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7782 CLARK
+25-APR-18 08.52.28.618266 AM
+
+      7788 SCOTT
+25-APR-18 08.52.28.618307 AM
+
+      7839 KING
+25-APR-18 08.52.28.618349 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7844 TURNER
+25-APR-18 08.52.28.618390 AM
+
+
+10 rows selected.
+
+SQL>
+
+===========================================================================================================
+
+
+SQL> declare
+cursor c1 is select * from emp;
+  2    3  z number(4);
+  4  x emp%rowtype;
+  5  begin
+  6  select count(*) into z from emp;
+  7  open c1;
+  8  for y in 1..z loop
+  9  fetch c1 into x;
+ 10  insert into temp values(x.empno, x.ename, systimestamp);
+ 11  end loop;
+ 12  close c1;
+ 13  end;
+ 14  /
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from temp;
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7369 SMITH
+25-APR-18 08.52.28.617135 AM
+
+      7499 ALLEN
+25-APR-18 08.52.28.617812 AM
+
+      7521 WARD
+25-APR-18 08.52.28.617876 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7566 JONES
+25-APR-18 08.52.28.618040 AM
+
+      7654 MARTIN
+25-APR-18 08.52.28.618175 AM
+
+      7698 BLAKE
+25-APR-18 08.52.28.618224 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7782 CLARK
+25-APR-18 08.52.28.618266 AM
+
+      7788 SCOTT
+25-APR-18 08.52.28.618307 AM
+
+      7839 KING
+25-APR-18 08.52.28.618349 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7844 TURNER
+25-APR-18 08.52.28.618390 AM
+
+      7369 SMITH
+25-APR-18 09.11.27.639347 AM
+
+      7499 ALLEN
+25-APR-18 09.11.27.639471 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7521 WARD
+25-APR-18 09.11.27.639500 AM
+
+      7566 JONES
+25-APR-18 09.11.27.639524 AM
+
+      7654 MARTIN
+25-APR-18 09.11.27.639681 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7698 BLAKE
+25-APR-18 09.11.27.639718 AM
+
+      7782 CLARK
+25-APR-18 09.11.27.639742 AM
+
+      7788 SCOTT
+25-APR-18 09.11.27.639765 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7839 KING
+25-APR-18 09.11.27.639788 AM
+
+      7844 TURNER
+25-APR-18 09.11.27.639812 AM
+
+      7876 ADAMS
+25-APR-18 09.11.27.639835 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      7900 JAMES
+25-APR-18 09.11.27.639858 AM
+
+      7902 FORD
+25-APR-18 09.11.27.639881 AM
+
+      7934 MILLER
+25-APR-18 09.11.27.639904 AM
+
+
+24 rows selected.
+
+SQL> select count(*) from emp;
+
+  COUNT(*)
+----------
+        14
+
+SQL>
+
+=====================================================================================================================
+
+
+SQL> DECLARE
+  2     id emp.empno%type;
+  3     name emp.ename%type;
+  4
+  5     CURSOR c2 is
+  6        SELECT empno, ename from emp;
+  7  BEGIN
+  8     OPEN c2;
+  9     LOOP
+ 10        FETCH c2 into id, name;
+ 11        EXIT WHEN c2%notfound;
+ 12        dbms_output.put_line(id || ' ' || name);
+ 13     END LOOP;
+ 14     CLOSE c2;
+ 15  END;
+ 16  /
+7369 SMITH
+7499 ALLEN
+7521 WARD
+7566 JONES
+7654 MARTIN
+7698 BLAKE
+7782 CLARK
+7788 SCOTT
+7839 KING
+7844 TURNER
+7876 ADAMS
+7900 JAMES
+7902 FORD
+7934 MILLER
+
+PL/SQL procedure successfully completed.
+
+SQL>
+
+=================================================================================================================
+
+
+  
+
+DECLARE
+id emp.empno%type;
+name emp.ename%type;
+x number:=4;
+CURSOR c2 is
+SELECT empno, ename from emp;
+BEGIN
+OPEN c2;
+LOOP
+FETCH c2 into id, name;
+EXIT WHEN c2%notfound;
+dbms_output.put_line(id || ' ' || name);
+insert into temp values(id, name, systimestamp);
+if c2%found then
+x:=c2%rowcount;
+insert into temp values(x, 'fetch', systimestamp);
+end if;
+END LOOP;
+CLOSE c2;
+END;
+/
+
+
+
+7369 SMITH
+7499 ALLEN
+7521 WARD
+7566 JONES
+7654 MARTIN
+7698 BLAKE
+7782 CLARK
+7788 SCOTT
+7839 KING
+7844 TURNER
+7876 ADAMS
+7900 JAMES
+7902 FORD
+7934 MILLER
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from temp;
+
+SQL> set lines 2000;
+SQL> /
+
+        ID NAME                 TIME
+---------- -------------------- ---------------------------------------------------------------------------
+      7369 SMITH                25-APR-18 08.52.28.617135 AM
+      7499 ALLEN                25-APR-18 08.52.28.617812 AM
+      7521 WARD                 25-APR-18 08.52.28.617876 AM
+      7566 JONES                25-APR-18 08.52.28.618040 AM
+      7654 MARTIN               25-APR-18 08.52.28.618175 AM
+      7698 BLAKE                25-APR-18 08.52.28.618224 AM
+      7782 CLARK                25-APR-18 08.52.28.618266 AM
+      7788 SCOTT                25-APR-18 08.52.28.618307 AM
+      7839 KING                 25-APR-18 08.52.28.618349 AM
+      7844 TURNER               25-APR-18 08.52.28.618390 AM
+      7369 SMITH                25-APR-18 09.11.27.639347 AM
+
+        ID NAME                 TIME
+---------- -------------------- ---------------------------------------------------------------------------
+      7499 ALLEN                25-APR-18 09.11.27.639471 AM
+      7521 WARD                 25-APR-18 09.11.27.639500 AM
+      7566 JONES                25-APR-18 09.11.27.639524 AM
+      7654 MARTIN               25-APR-18 09.11.27.639681 AM
+      7698 BLAKE                25-APR-18 09.11.27.639718 AM
+      7782 CLARK                25-APR-18 09.11.27.639742 AM
+      7788 SCOTT                25-APR-18 09.11.27.639765 AM
+      7839 KING                 25-APR-18 09.11.27.639788 AM
+      7844 TURNER               25-APR-18 09.11.27.639812 AM
+      7876 ADAMS                25-APR-18 09.11.27.639835 AM
+      7900 JAMES                25-APR-18 09.11.27.639858 AM
+
+        ID NAME                 TIME
+---------- -------------------- ---------------------------------------------------------------------------
+      7902 FORD                 25-APR-18 09.11.27.639881 AM
+      7934 MILLER               25-APR-18 09.11.27.639904 AM
+      7369 SMITH                25-APR-18 09.40.17.843293 AM
+         1 fetch                25-APR-18 09.40.17.892940 AM
+      7499 ALLEN                25-APR-18 09.40.17.893147 AM
+         2 fetch                25-APR-18 09.40.17.893182 AM
+      7521 WARD                 25-APR-18 09.40.17.893222 AM
+         3 fetch                25-APR-18 09.40.17.893238 AM
+      7566 JONES                25-APR-18 09.40.17.893255 AM
+         4 fetch                25-APR-18 09.40.17.893268 AM
+      7654 MARTIN               25-APR-18 09.40.17.893285 AM
+
+        ID NAME                 TIME
+---------- -------------------- ---------------------------------------------------------------------------
+         5 fetch                25-APR-18 09.40.17.893297 AM
+      7698 BLAKE                25-APR-18 09.40.17.893314 AM
+         6 fetch                25-APR-18 09.40.17.893328 AM
+      7782 CLARK                25-APR-18 09.40.17.893345 AM
+         7 fetch                25-APR-18 09.40.17.893357 AM
+      7788 SCOTT                25-APR-18 09.40.17.893374 AM
+         8 fetch                25-APR-18 09.40.17.893386 AM
+      7839 KING                 25-APR-18 09.40.17.893403 AM
+         9 fetch                25-APR-18 09.40.17.893415 AM
+      7844 TURNER               25-APR-18 09.40.17.893432 AM
+        10 fetch                25-APR-18 09.40.17.893445 AM
+
+        ID NAME                 TIME
+---------- -------------------- ---------------------------------------------------------------------------
+      7876 ADAMS                25-APR-18 09.40.17.893462 AM
+        11 fetch                25-APR-18 09.40.17.893474 AM
+      7900 JAMES                25-APR-18 09.40.17.893491 AM
+        12 fetch                25-APR-18 09.40.17.893504 AM
+      7902 FORD                 25-APR-18 09.40.17.893520 AM
+        13 fetch                25-APR-18 09.40.17.893532 AM
+      7934 MILLER               25-APR-18 09.40.17.893549 AM
+        14 fetch                25-APR-18 09.40.17.893562 AM
+
+52 rows selected.
+
+SQL>

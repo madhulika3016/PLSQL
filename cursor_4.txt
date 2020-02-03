@@ -1,0 +1,150 @@
+declare
+cursor c1(d number) is select * from emp where deptno=d;
+begin
+for x in c1(10) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+end loop;
+for x in c1(30) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+end loop;
+end;
+/
+
+CLARK 2450
+KING 5000
+MILLER 1300
+ALLEN 1600
+WARD 1250
+MARTIN 1250
+BLAKE 2850
+TURNER 1500
+JAMES 950
+
+PL/SQL procedure successfully completed.
+
+
+declare
+cursor c1(dd number) is select * from emp where deptno=dd;
+begin
+for x in c1(&d1) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+end loop;
+for x in c1(&d2) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+end loop;
+end;
+/
+
+Enter value for d1: 10
+old   4: for x in c1(&d1) loop
+new   4: for x in c1(10) loop
+Enter value for d2: 20
+old   7: for x in c1(&d2) loop
+new   7: for x in c1(20) loop
+CLARK 2450
+KING 5000
+MILLER 1300
+SMITH 800
+JONES 2975
+SCOTT 3000
+ADAMS 1100
+FORD 3000
+
+PL/SQL procedure successfully completed.
+
+
+
+declare
+cursor c1(d number, s number) is select * from emp where deptno=d and sal>s;
+begin
+for x in c1(10, 500) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+end loop;
+for x in c1(30, 1000) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+end loop;
+end;
+/
+
+CLARK 2450
+KING 5000
+MILLER 1300
+ALLEN 1600
+WARD 1250
+MARTIN 1250
+BLAKE 2850
+TURNER 1500
+
+PL/SQL procedure successfully completed.
+
+
+declare
+cursor c1(d number, s number default 1000) is select * from emp where deptno=d and sal>s;
+begin
+for x in c1(10) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+insert into temp values(x.sal, x.ename, systimestamp);
+end loop;
+for x in c1(30) loop
+dbms_output.put_line(x.ename||' '|| x.sal);
+insert into temp values(x.sal, x.ename, systimestamp);
+end loop;
+end;
+/
+
+CLARK 2450
+KING 5000
+MILLER 1300
+ALLEN 1600
+WARD 1250
+MARTIN 1250
+BLAKE 2850
+TURNER 1500
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from temp;
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      2450 CLARK
+03-MAY-18 09.35.43.453372 AM
+
+      5000 KING
+03-MAY-18 09.35.43.495788 AM
+
+      1300 MILLER
+03-MAY-18 09.35.43.495872 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      1600 ALLEN
+03-MAY-18 09.35.43.496118 AM
+
+      1250 WARD
+03-MAY-18 09.35.43.496505 AM
+
+      1250 MARTIN
+03-MAY-18 09.35.43.496813 AM
+
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+      2850 BLAKE
+03-MAY-18 09.35.43.496904 AM
+
+      1500 TURNER
+03-MAY-18 09.35.43.496967 AM
+
+
+8 rows selected.
+
+SQL>
+

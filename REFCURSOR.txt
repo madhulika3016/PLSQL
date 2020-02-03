@@ -1,0 +1,63 @@
+DECLARE
+TYPE emp_rec is RECORD(empname emp2.ename%type,eno emp2.empno%type);
+var1 emp_rec;
+BEGIN
+select ename,empno into var1.empname,var1.eno from emp2 where empno=1002;
+DBMS_OUTPUT.PUT_LINE(var1.empname);
+DBMS_OUTPUT.PUT_LINE(var1.eno);
+END;
+
+
+--weak ref cursor
+
+DECLARE
+TYPE Wk_RefCur IS REF CURSOR; 
+cur_var wk_RefCur;
+e_name emp2.ename%TYPE;
+emp_sal emp2.sal%TYPE; 
+BEGIN
+OPEN cur_var FOR SELECT  ename, Sal FROM emp2 WHERE empno = 1002; 
+FETCH cur_var INTO e_name, emp_sal;
+CLOSE cur_var;
+DBMS_OUTPUT.PUT_LINE (e_name ||' '||emp_sal); 
+END; 
+
+--sys refcursor
+DECLARE
+ Cur_var  SYS_REFCURSOR; 
+e_name emp2.ename%TYPE;
+emp_sal emp2.sal%TYPE; 
+BEGIN
+OPEN cur_var FOR SELECT  ename, Sal FROM emp2 WHERE empno = 1002; 
+FETCH cur_var INTO e_name, emp_sal;
+CLOSE cur_var;
+DBMS_OUTPUT.PUT_LINE (e_name ||' '||emp_sal); 
+END; 
+
+--strong refcursor
+
+DECLARE
+TYPE my_RefCur IS REF CURSOR RETURN emp2%ROWTYPE; 
+cur_var my_RefCur;
+rec_var emp2%ROWTYPE; 
+BEGIN
+OPEN cur_var FOR SELECT * FROM emp2 WHERE empNO = 1003; 
+FETCH cur_var INTO rec_var;
+CLOSE cur_var; 
+DBMS_OUTPUT.PUT_LINE('Employee  '||rec_var.ename||'   has salary '||rec_var.sal); 
+END; 
+
+DECLARE
+TYPE my_rec IS RECORD(
+emp_sal emp2.sal%TYPE);
+TYPE Ref_Cur IS REF CURSOR RETURN my_rec; 
+cur_var REF_CUR;
+t_var emp2.sal%TYPE; 
+BEGIN
+OPEN cur_var FOR SELECT sal FROM emp2 WHERE empno = 1003; 
+FETCH cur_var INTO t_var; 
+CLOSE cur_var;
+DBMS_OUTPUT.PUT_LINE('Salary  is '||t_var); 
+END;
+
+

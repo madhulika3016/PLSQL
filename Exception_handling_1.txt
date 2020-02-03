@@ -1,0 +1,627 @@
+set serveroutput on;
+
+declare
+nm varchar2(20);
+begin
+select ename into nm
+from emp 
+where job='MANAGER';
+dbms_output.put_line('Name is '||nm);
+exception 
+when too_many_rows then 
+dbms_output.put_line('Your SELECT statement retrieved 
+multiple rows. Consider using a cursor.');
+end;
+/
+
+Your SELECT statement retrieved
+multiple rows. Consider using a cursor.
+
+PL/SQL procedure successfully completed.
+
+============================================================
+
+declare
+x number;
+begin
+select sal into x from emp where ename='SCOTT';
+--dbms_output.put_line(x);
+exception
+when no_data_found then
+dbms_output.put_line('No data found');
+when too_many_rows then
+dbms_output.put_line('Too many rows');
+end;
+/
+
+
+
+No data found
+
+PL/SQL procedure successfully completed.
+
+SQL>
+SQL>
+SQL> declare
+  2  x number;
+  3  begin
+  4  select sal into x from emp where ename='SCOTT';
+  5  dbms_output.put_line(x);
+  6  exception
+  7  when no_data_found then
+  8  dbms_output.put_line('No data found');
+  9  when too_many_rows then
+ 10  dbms_output.put_line('Too many rows');
+end;
+ 11   12  /
+3000
+
+PL/SQL procedure successfully completed.
+
+
+===========================================================
+
+
+
+declare
+eid emp.empno%type:=&eid;
+enm emp.ename%type;
+work emp.job%type;
+--user defined exception
+invalid_id exception;
+
+begin
+if eid<=0 then raise invalid_id;
+else
+select empno, ename, job into eid, enm, work 
+from emp
+where empno=eid;
+dbms_output.put_line('Employee name is '||enm||' id is '||eid||' job is '||work);
+end if;
+
+exception 
+when invalid_id then
+dbms_output.put_line('ID should be greater than zero');
+when no_data_found then 
+dbms_output.put_line('No such employee');
+when others then
+dbms_output.put_line('Error!');
+end;
+/
+
+
+Enter value for eid: 0
+old   2: eid emp.empno%type:=&eid;
+new   2: eid emp.empno%type:=0;
+ID should be greater than zero
+
+PL/SQL procedure successfully completed.
+
+SQL> /
+Enter value for eid: 8000
+old   2: eid emp.empno%type:=&eid;
+new   2: eid emp.empno%type:=8000;
+No such employee
+
+PL/SQL procedure successfully completed.
+
+Enter value for eid: 7934
+old   2: eid emp.empno%type:=&eid;
+new   2: eid emp.empno%type:=7934;
+Employee name is MILLER id is 7934 job is CLERK
+
+PL/SQL procedure successfully completed.
+
+====================================================================================
+
+
+
+declare
+x number(4);
+begin
+x:=20000;
+dbms_output.put_line(x);
+exception
+when value_error then
+dbms_output.put_line('Value error');
+end;
+/
+
+
+Value error
+
+PL/SQL procedure successfully completed.
+
+=====================================================================================
+
+
+
+declare
+x number(4);
+begin
+x:='Priyanka';
+dbms_output.put_line(x);
+exception
+when value_error then
+dbms_output.put_line('Value error');
+end;
+/
+
+Value error
+
+PL/SQL procedure successfully completed.
+
+====================================================================================
+
+INVALID_NUMBER:
+
+begin
+insert into emp (empno, sal) values(1, '123x');
+dbms_output.put_line('Value inserted.');
+exception when invalid_number then 
+dbms_output.put_line('Value conversion failed');
+end;
+/
+
+Value conversion failed
+
+PL/SQL procedure successfully completed.
+
+====================================================================================
+
+
+ZERO_DIVIDE:
+
+declare
+a number:=6;
+b number;
+begin
+b:=0;
+a:=a/b;
+b:=7;
+dbms_output.put_line('value of b is '||b);
+exception when zero_divide then 
+dbms_output.put_line('trying to divide by 0');
+dbms_output.put_line('value of a '||a);
+dbms_output.put_line('value of b '||b);
+end;
+/
+
+
+trying to divide by 0
+value of a 6
+value of b 0
+
+PL/SQL procedure successfully completed.
+
+
+======================================================================================
+
+
+
+declare
+a number:=6;
+b varchar2(20);
+begin
+b:=a;
+a:=a/b;
+b:=7;
+dbms_output.put_line('value of b is '||b);
+exception 
+when zero_divide then 
+dbms_output.put_line('trying to divide by 0');
+dbms_output.put_line('value of a '||a);
+dbms_output.put_line('value of b '||b);
+when others then 
+dbms_output.put_line('trying to divide by other value');
+end;
+/
+
+
+value of b is 7
+
+PL/SQL procedure successfully completed.
+
+===================================================================================
+
+
+declare
+x number(4):=10;
+y number(4):=0;
+a number;
+b varchar2(4000);
+begin
+x:=x/y;
+exception
+when zero_divide then
+a:=sqlcode;
+b:=sqlerrm;
+dbms_output.put_line('Oracle says error code '||a);
+dbms_output.put_line('Oracle says error message '||b);
+end;
+/
+
+Oracle says error code -1476
+Oracle says error message ORA-01476: divisor is equal to zero
+
+PL/SQL procedure successfully completed.
+
+=========================================================================================
+24/may
+
+declare
+id emp.empno%type;
+nm emp.ename%type;
+jb emp.job%type;
+a number;
+b varchar2(4000);
+begin
+select empno, ename, job into id, nm, jb
+from emp
+where job='MANAGER';
+dbms_output.put_line(id|| nm ||jb);
+exception
+when too_many_rows then
+a:=sqlcode;
+b:=sqlerrm;
+dbms_output.put_line('Oracle says error code '||a);
+dbms_output.put_line('Oracle says error message '||b);
+end;
+/
+
+
+Oracle says error code -1422
+Oracle says error message ORA-01422: exact fetch returns more than requested number of rows
+
+PL/SQL procedure successfully completed.
+
+==============================================================================================
+
+
+DECLARE
+grade char(1) := 'A';
+BEGIN
+CASE grade
+when 'X' then dbms_output.put_line('Excellent');
+when 'B' then dbms_output.put_line('Very good');
+when 'C' then dbms_output.put_line('Well done');
+when 'D' then dbms_output.put_line('You passed');
+when 'F' then dbms_output.put_line('Better try again');
+else dbms_output.put_line('No such grade');
+END CASE;
+END;
+/
+
+No such grade
+
+PL/SQL procedure successfully completed.
+
+
+=========================================================================================
+
+CASE_NOT_FOUND:
+
+
+DECLARE 
+   grade char(1) := 'A'; 
+BEGIN 
+   CASE grade 
+      when 'X' then dbms_output.put_line('Excellent'); 
+      when 'B' then dbms_output.put_line('Very good'); 
+      when 'C' then dbms_output.put_line('Well done'); 
+      when 'D' then dbms_output.put_line('You passed'); 
+      when 'F' then dbms_output.put_line('Better try again'); 
+   END CASE; 
+exception 
+when case_not_found then
+dbms_output.put_line('Case not found');
+END; 
+/
+
+
+Case not found
+
+PL/SQL procedure successfully completed.
+
+==========================================================================================
+
+
+DECLARE 
+   grade char(1) := 'A'; 
+a number;
+b varchar2(4000);
+BEGIN 
+   CASE grade 
+      when 'X' then dbms_output.put_line('Excellent'); 
+      when 'B' then dbms_output.put_line('Very good'); 
+      when 'C' then dbms_output.put_line('Well done'); 
+      when 'D' then dbms_output.put_line('You passed'); 
+      when 'F' then dbms_output.put_line('Better try again'); 
+   END CASE; 
+exception 
+when case_not_found then
+a:=sqlcode;
+b:=sqlerrm;
+dbms_output.put_line('Oracle erro: '||a ||' ----- '||b);
+END; 
+/
+
+
+Oracle erro: -6592 ----- ORA-06592: CASE not found while executing CASE statement
+
+PL/SQL procedure successfully completed.
+
+==========================================================================================
+
+NO_DATA_FOUND:
+
+
+declare
+id emp.empno%type;
+nm emp.ename%type;
+jb emp.job%type;
+a number;
+b varchar2(4000);
+begin
+select empno, ename, job into id, nm, jb
+from emp
+where ENAME='JAME';
+dbms_output.put_line(id|| nm ||jb);
+exception
+when NO_DATA_FOUND then
+a:=sqlcode;
+b:=sqlerrm;
+dbms_output.put_line('Oracle says error code '||a);
+dbms_output.put_line('Oracle says error message '||b);
+end;
+/
+
+
+Oracle says error code 100
+Oracle says error message ORA-01403: no data found
+
+PL/SQL procedure successfully completed.
+
+
+=========================================================================================
+
+EXCEPTION HANDLING IN SUB BLOCKS:
+
+DECLARE
+X NUMBER(4):=10;
+begin
+dbms_output.put_line('BEFORE SUB BLOCK X IS : '||X);
+	DECLARE
+	x number(4):=100;
+	begin
+	x:=100000;
+	dbms_output.put_line('x in sub block :'||x);
+	exception
+	when value_error then 
+	dbms_output.put_line('Sub error');
+	end;
+dbms_output.put_line('after sub block :'||x);
+exception
+	when value_error then 
+	dbms_output.put_line('Main error');
+	end;
+/
+
+
+
+BEFORE SUB BLOCK X IS : 10
+Sub error
+after sub block :10
+
+PL/SQL procedure successfully completed.
+
+==========================================================================================
+
+USER-DEFINED EXCEPTION:
+
+declare
+x number(8);
+abc exception;
+begin
+select sal into x from emp
+where ename='JAMES';
+IF x<5000 then raise abc;
+end if;
+dbms_output.put_line('x is greater than 5000');
+exception 
+when abc then
+dbms_output.put_line(x||' is less than limit!');
+end;
+/
+
+
+950 is less than limit!
+
+PL/SQL procedure successfully completed.
+
+=========================================================================================
+
+
+declare
+dno emp.deptno%type:=&dno;
+begin
+--select deptno into dno from emp;
+case dno
+when 10 then dbms_output.put_line('Employee belongs to dept. no. 10');
+when 20 then dbms_output.put_line('Employee belongs to dept. no. 20');
+when 30 then dbms_output.put_line('Employee belongs to dept. no. 30');
+end case;
+exception when case_not_found then
+dbms_output.put_line('no data found');
+end;
+/
+
+==========================================================================================
+
+
+PRAGMA EXCEPTION:-
+The pragma EXCEPTION_INIT associates an exception name with an Oracle error number. 
+You can intercept any ORA- error and write a specific handler for it 
+instead of using the OTHERS handler. 
+
+PRAGMA EXCEPTION_INIT(exception_name, -Oracle_error_number);
+where exception_name is the name of a previously declared exception and the number 
+is a negative value corresponding to an ORA- error number. 
+
+declare
+x number(8);
+abc exception;
+pragma exception_init (abc, -01722);
+begin
+insert into temp values('Mumbai', 'city', systimestamp);
+exception
+when abc then
+--insert into temp values(1, 'hello', SYSTIMESTAMP);
+dbms_output.put_line(sqlcode||' ------ '||sqlerrm);
+end;
+/
+
+-1722 ------ ORA-01722: invalid number
+
+PL/SQL procedure successfully completed.
+
+
+SQL> SELECT * FROM TEMP;
+
+        ID VALUE                TIME
+---------- -------------------- ---------------------------------------------------------------------------
+         1 hello                23-MAY-18 10.50.12.282126 PM
+
+
+
+
+==========================================================================================
+
+PL/SQL pragma EXCEPTION_INIT:
+pragma EXCEPTION_INIT: Pragma is a keyword directive to execute proceed at compile time. 
+pragma EXCEPTION_INIT function take this two argument,
+
+exception_name
+error_number
+You can define pragrma EXCEPTION_INIT in DECLARE BLOCK on your program.
+
+PRAGMA EXCEPTION_INIT(exception_name, -error_number);
+
+exception_name and error_number define on yourself, where exception_name is character 
+string up to 2048 bytes support and error_number is a negative integer range 
+from -20000 to -20999.
+
+DECLARE
+    myex EXCEPTION;
+    PRAGMA EXCEPTION_INIT(myex,-20015); 
+    n NUMBER := &n;
+BEGIN
+    FOR i IN 1..n LOOP
+        dbms_output.put_line(i);
+        IF i=n THEN
+            RAISE myex;
+        END IF;
+    END LOOP;
+EXCEPTION
+    WHEN myex THEN
+        dbms_output.put_line('loop finish');
+END;
+/
+
+PL/SQL procedure successfully completed.
+
+SQL> /
+Enter value for n: 11
+old   4:     n NUMBER := &n;
+new   4:     n NUMBER := 11;
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+loop finish
+
+PL/SQL procedure successfully completed.
+
+=====================================================================================================
+
+PL/SQL RAISE_APPLICATION_ERROR
+In PL/SQL RAISE_APPLICATION_ERROR function use to assign exception name and exception error code.
+
+Syntax
+
+raise_application_error(error_number, error_message);
+
+
+DECLARE
+    myex EXCEPTION;
+    n NUMBER := &n;
+BEGIN
+    FOR i IN 1..n LOOP
+        dbms_output.put_line(i);
+        IF i=n THEN
+            RAISE myex;
+        END IF;
+    END LOOP;
+EXCEPTION
+    WHEN myex THEN
+        RAISE_APPLICATION_ERROR(-20015, 'loop finish');
+END;
+/
+
+
+Enter value for n: 2
+old   3:     n NUMBER := &n;
+new   3:     n NUMBER := 2;
+1
+2
+DECLARE
+*
+ERROR at line 1:
+ORA-20015: loop finish
+ORA-06512: at line 13
+
+=====================================================================================================
+
+
+declare
+    v_devide int := 0;
+    v_sum int;
+    my_zero_devide exception;
+    pragma exception_init ( my_zero_devide, -20000);
+begin
+    begin
+        select sum(sal)/v_devide into v_sum     from emp;
+    exception
+        when others then
+            raise_application_error (-20000, '  Error from Inner Exception');
+    end;
+exception
+    when my_zero_devide then
+        dbms_output.put_line ('Error 300-> zero_devide error' || sqlerrm  );
+    when standard.zero_divide then
+        dbms_output.put_line ('Error 200-> zero_devide error' || sqlerrm  );
+    when others then
+      dbms_output.put_line ('Error 100->' || sqlerrm );
+end;
+
+
+
+===================================================================================================
+
+declare
+abc exception;
+pragma exception_init(abc, -06550);
+begin
+insert into dept values(
+exception when abc then 
+dbms_output.put_line (sqlcode||'-----'|| sqlerrm );
+end;
+/
+

@@ -1,0 +1,91 @@
+declare
+x number:=4;
+begin
+update emp set sal=15000 where deptno=10;
+if sql%found then
+x:=sql%rowcount;
+insert into temp values(x, 'updated',systimestamp);
+end if;
+end;
+/
+
+SQL> declare
+  2  x number:=4;
+  3  begin
+  4  update emp set sal=15000 where ename='KING';
+if sql%found then
+  5    6  x:=sql%rowcount;
+  7  insert into temp values(x, 'updated');
+  8  end if;
+  9  end;
+ 10  /
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from temp;
+
+        ID NAME
+---------- --------------------
+         1 updated
+===========================================================
+
+
+SQL> alter table temp add time timestamp;
+
+Table altered.
+
+SQL> declare
+x number:=4;
+  2    3  begin
+  4  update emp set sal=15000 where deptno=10;
+  5  if sql%found then
+  6  x:=sql%rowcount;
+  7  insert into temp values(x, 'updated',systimestamp);
+  8  end if;
+  9  end;
+ 10  /
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from temp;
+
+        ID NAME
+---------- --------------------
+TIME
+---------------------------------------------------------------------------
+         1 updated
+
+
+         3 updated
+
+
+         3 updated
+24-APR-18 09.17.34.882574 AM
+
+
+SQL> col time for a30
+SQL> /
+
+        ID NAME                 TIME
+---------- -------------------- ------------------------------
+         1 updated
+         3 updated
+         3 updated              24-APR-18 09.17.34.882574 AM
+
+SQL>
+
+=================================================================================
+
+
+declare
+x number:=4;
+begin
+update emp set sal=15000 where deptno=70;
+if SQL%notfound then
+dbms_output.put_line('No customer affected.');
+elsif sql%found then
+x:=sql%rowcount;
+insert into temp values(x, 'updated',systimestamp);
+end if;
+end;
+/

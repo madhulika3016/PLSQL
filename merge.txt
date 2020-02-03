@@ -1,0 +1,126 @@
+
+
+SQL> create table copy_emp as select * from scott.emp where 1=2;
+
+Table created.
+
+SQL> desc copy_emp;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EMPNO                                              NUMBER(4)
+ ENAME                                              VARCHAR2(10)
+ JOB                                                VARCHAR2(9)
+ MGR                                                NUMBER(4)
+ HIREDATE                                           DATE
+ SAL                                                NUMBER(7,2)
+ COMM                                               NUMBER(7,2)
+ DEPTNO                                             NUMBER(2)
+
+SQL> select * from copy_emp;
+
+no rows selected
+==========================================================================================
+
+set serveroutput on;
+
+declare
+eid emp.empno%type;
+begin
+merge into copy_emp c using emp e
+on (e.empno=c.empno)
+
+when matched then
+update set 
+c.ename=e.ename,
+c.job=e.job,
+c.mgr=e.mgr,
+c.hiredate=e.hiredate,
+c.sal=e.sal,
+c.comm=e.comm,
+c.deptno=e.deptno
+
+when not matched then
+insert values 
+(e.empno,e.ename,e.job,e.mgr,e.hiredate,e.sal,e.comm,e.deptno);
+end;
+/
+
+=========================================================================================
+
+
+variable rows_deleted varchar2(30)
+declare
+
+eid emp.empno%type:=7900;
+begin
+delete from emp where empno=eid;
+:rows_deleted:=(sql%rowcount||' rows deleted');
+dbms_output.put_line(:rows_deleted||' rows deleted');
+end;
+/
+
+==========================================================================================
+
+
+create table dept1 as select * from dept;
+
+create procedure add_dept is
+dno dept.deptno%type;
+dnm dept.dname%type;
+begin
+dno:=60;
+dnm:='HR';
+insert into dept1(deptno, dname) values(dno, dnm);
+dbms_output.put_line('Inserted '||sql%rowcount||' rows!');
+end;
+/
+
+
+begin
+add_dept;
+end;
+/
+
+Inserted 1 rows!
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from dept1;
+
+    DEPTNO DNAME          LOC
+---------- -------------- -------------
+        10 ACCOUNTING     NEW YORK
+        20 RESEARCH       DALLAS
+        30 SALES          CHICAGO
+        40 OPERATIONS     BOSTON
+        60 HR
+
+============================================================================================
+
+
+create function check_sal return boolean is
+did emp.deptno%type;
+eid emp.empno%type;
+salary emp.sal%type;
+avg_Sal emp.sal%type;
+begin
+eid:=&id;
+select sal, deptno into salary, did 
+from emp where empno=eid;
+
+select avg(sal) into avg_sal
+from emp
+where deptno=did;
+
+if sal>avg_sal then
+return true;
+else 
+return false;
+end if;
+
+exception when no_data_found then
+return null;
+
+end;
+/
+

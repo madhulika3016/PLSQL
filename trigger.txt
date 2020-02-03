@@ -1,0 +1,108 @@
+CREATE OR REPLACE TRIGGER updatesal  
+BEFORE DELETE OR INSERT OR UPDATE ON emp13  
+FOR EACH ROW  
+WHEN (NEW.empno > 0)  
+DECLARE  
+   sal_diff number;  
+BEGIN  
+   sal_diff := :NEW.sal  - :OLD.sal;  
+   dbms_output.put_line('Old salary: ' || :OLD.sal);  
+   dbms_output.put_line('New salary: ' || :NEW.sal);  
+   dbms_output.put_line('Salary difference: ' || sal_diff);  
+END;
+
+DECLARE   
+   total_rows number(2);  
+BEGIN  
+   UPDATE emp13  
+   SET sal = sal + 500;  
+   IF sql%notfound THEN  
+      dbms_output.put_line('no employees updated');  
+   ELSIF sql%found THEN  
+      total_rows := sql%rowcount;  
+      dbms_output.put_line( total_rows || ' employees updated ');  
+   END IF;   
+END;
+
+//new inserted record ename is capital
+
+CREATE or REPLACE TRIGGER trg1
+    BEFORE
+    INSERT ON emp1
+    FOR EACH ROW
+BEGIN
+    :new.ename := upper(:new.ename);
+END;
+
+CREATE or REPLACE TRIGGER trg1
+    AFTER
+    DELETE ON emp1
+    FOR EACH ROW
+BEGIN
+    IF :old.eno = 1 THEN
+        raise_application_error(-20015, 'You can't delete this row');
+    END IF;
+END;
+
+//try deleting row it will not allow 
+
+ALTER TRIGGER <trigger_name> [ENABLE|DISABLE];
+ALTER TABLE <table_name> [ENABLE|DISABLE] ALL TRIGGERS;  
+
+CREATE TABLE dept( 
+Dept_no NUMBER, 
+Dept_name VARCHAR2(50),
+LOCATION VARCHAR2(50));
+
+BEGIN
+INSERT INTO DEPT VALUES(10,'HR','USA');
+INSERT INTO DEPT VALUES(20,'SALES','UK');
+INSERT INTO DEPT VALUES(30,'FINANCIAL','JAPAN'); 
+COMMIT;
+END;
+
+select * from dept;
+
+CREATE VIEW emp_view(ename,dept_name,location) AS
+SELECT emp1.ename,dept.dept_name,dept.location
+FROM emp1,dept
+WHERE emp1.deptno=dept.dept_no;
+
+select * from emp_view;
+
+--update not possible in a complex view
+BEGIN
+UPDATE emp_view SET location='FRANCE' WHERE ename='raksha';
+END;
+
+CREATE TRIGGER view_modify_trg
+INSTEAD OF UPDATE
+ON emp_view
+FOR EACH ROW
+BEGIN
+UPDATE dept
+SET location=:new.location
+WHERE dept_name=:old.dept_name;
+END;
+
+select * from emp_view;
+
+select * from dept; 
+
+CREATE TRIGGER emp_trig 
+FOR INSERT 
+ON emp1
+COMPOUND TRIGGER 
+BEFORE EACH ROW IS 
+BEGIN
+:new.sal:=5000;
+END BEFORE EACH ROW;
+END emp_trig;
+
+DROP TRIGGER UPDATESAL;
+BEGIN
+INSERT INTO EMP1 VALUES(1002,'abc','IT',1003,'21-01-17',21000,1000,20); 
+COMMIT;
+END;
+
+SELECT * FROM EMP1;

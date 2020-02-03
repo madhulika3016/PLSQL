@@ -1,0 +1,96 @@
+CREATE OR REPLACE PACKAGE mypack
+IS
+PROCEDURE set_record (p_emp_rec IN emp%ROWTYPE);
+FUNCTION get record (p_emp no IN NUMBER) RETURN emp%ROWTYPE;
+END mypack;
+
+CREATE OR REPLACE PACKAGE BODY mypack
+IS	
+PROCEDURE set_record(p_emp_rec IN emp%ROWTYPE)
+IS
+PRAGMA AUTONOMOUS_TRANSACTION;
+BEGIN
+INSERT INTO emp
+VALUES(p_emp_rec.emp_name,p_emp_rec.emp_no; p_emp_rec.salary,p_emp_rec.manager);
+COMMIT;
+END set_record;
+FUNCTION get_record(p_emp_no IN NUMBER)
+RETURN emp%ROWTYPE
+IS
+l_emp_rec emp%ROWTYPE;
+BEGIN
+SELECT * INTO l_emp_rec FROM emp where emp_no=p_emp_no
+RETURN l_emp_rec;
+END get_record;
+BEGUN	
+dbms_output.put_line(‘Control is now executing the package initialization part');
+END mypack;
+
+DECLARE
+l_emp_rec emp%ROWTYPE;
+l_get_rec emp%ROWTYPE;
+BEGIN
+dbms output.put line(‘Insert new record for employee 1004');
+l_emp_rec.emp_no:=l004;
+l_emp_rec.emp_name:='CCC';
+l_emp_rec.salary~20000;
+l_emp_rec.manager:=’BBB’;
+mypack.set_record(1_emp_rec);
+dbms_output.put_line(‘Record inserted');
+dbms output.put line(‘Calling get function to display the inserted record'):
+l_get_rec:=mypack.get_record(1004);
+dbms_output.put_line(‘Employee name: ‘||l_get_rec.emp_name);
+dbms_output.put_line(‘Employee number:‘||l_get_rec.emp_no);
+dbms_output.put_line(‘Employee salary:‘||l_get_rec.salary');
+dbms output.put line(‘Employee manager:‘||1_get_rec.manager);		
+END;
+
+ALTER PACKAGE pack1 COMPILE BODY;
+
+drop package pack1;
+
+--advance package
+
+create or replace package REFCURSOR_PKG as
+  TYPE WEAK_REF_CURSOR IS REF CURSOR;
+  TYPE STRONG_REF_CURSOR IS REF CURSOR RETURN EMP%ROWTYPE;
+end REFCURSOR_PKG;
+
+The pl/sql procedure that returns a ref-cursor looks like this:
+
+/** until Oracle 9 */
+create or replace procedure test( p_deptno IN number
+                                , p_cursor OUT 
+REFCURSOR_PKG.WEAK8i_REF_CURSOR)
+is
+begin
+  open p_cursor FOR 
+  select *
+  from   emp
+  where  deptno = p_deptno;
+end test;
+
+
+Since Oracle 9i you can use SYS_REFCURSOR as the type for the returning 
+REF_CURSOR.
+
+/** From Oracle 9 */
+create or replace procedure test( p_deptno IN number, p_cursor OUT SYS_REFCURSOR)
+is
+begin
+  open p_cursor FOR 
+  select * from   emp where  deptno = p_deptno;
+end test;
+
+
+/* Strong type */
+
+create or replace procedure test( p_deptno IN number
+                                , p_cursor OUT REFCURSOR_PKG.STRONG REF_CURSOR)
+is
+begin
+  open p_cursor FOR select * from   emp
+  where  deptno = p_deptno;
+end test;
+
+ 

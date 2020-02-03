@@ -1,0 +1,382 @@
+SQL> DECLARE
+  2     a integer := 10;
+  3     b integer := 20;
+   c integer;
+  4    5     f real;
+  6  BEGIN
+  7     c := a + b;
+  8     dbms_output.put_line('Value of c: ' || c);
+  9     f := 70.0/3.0;
+ 10     dbms_output.put_line('Value of f: ' || f);
+ 11  END;
+ 12  /
+Value of c: 30
+Value of f: 23.33333333333333333333333333333333333333
+
+PL/SQL procedure successfully completed.
+
+
+==============================================================================================================================
+
+
+SQL> DECLARE
+   -- Global variables
+  2    3     num1 number := 95;
+  4     num2 number := 85;
+  5  BEGIN
+  6     dbms_output.put_line('Outer Variable num1: ' || num1);
+  7     dbms_output.put_line('Outer Variable num2: ' || num2);
+  8     DECLARE
+  9        -- Local variables
+ 10        num1 number := 195;
+ 11        num2 number := 185;
+   BEGIN
+ 12   13        dbms_output.put_line('Inner Variable num1: ' || num1);
+ 14        dbms_output.put_line('Inner Variable num2: ' || num2);
+ 15     END;
+ 16  END;
+ 17  /
+Outer Variable num1: 95
+Outer Variable num2: 85
+Inner Variable num1: 195
+Inner Variable num2: 185
+
+PL/SQL procedure successfully completed.
+
+
+==============================================================================================================================
+
+
+SQL> CREATE TABLE CUSTOMERS(
+   ID   INT NOT NULL,
+  2    3     NAME VARCHAR (20) NOT NULL,
+  4     AGE INT NOT NULL,
+  5     ADDRESS CHAR (25),
+  6     SALARY   DECIMAL (18, 2),
+  7     PRIMARY KEY (ID)
+  8  );
+
+Table created.
+
+SQL> INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY)
+VALUES (1, 'Ramesh', 32, 'Ahmedabad', 2000.0  2  0 );
+
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY)
+
+1 row created.
+
+SQL> SQL>   2  VALUES (2, 'Khilan', 25, 'Delhi', 1500.00 );
+
+
+1 row created.
+
+SQL> SQL> INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY)
+  2  VALUES (3, 'kaushik', 23, 'Kota', 2000.00 );
+
+1 row created.
+
+SQL>
+SQL> INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY)
+  2  VALUES (4, 'Chaitali', 25, 'Mumbai', 6500.00 );
+
+
+1 row created.
+
+SQL> SQL> INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY)
+  2  VALUES (5, 'Hardik', 27, 'Bhopal', 8500.00 );
+
+1 row created.
+
+SQL>
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY)
+SQL>   2  VALUES (6, 'Komal', 22, 'MP', 4500.00 );
+
+1 row created.
+
+SQL> select * from CUSTOMERS;
+
+        ID NAME                        AGE ADDRESS                       SALARY
+---------- -------------------- ---------- ------------------------- ----------
+         1 Ramesh                       32 Ahmedabad                       2000
+         2 Khilan                       25 Delhi                           1500
+         3 kaushik                      23 Kota                            2000
+         4 Chaitali                     25 Mumbai                          6500
+         5 Hardik                       27 Bhopal                          8500
+         6 Komal                        22 MP                              4500
+
+6 rows selected.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> DECLARE
+  2     c_id customers.id%type := 1;
+  3     c_name  customers.name%type;
+  4     c_addr customers.address%type;
+  5     c_sal  customers.salary%type;
+  6  BEGIN
+  7     SELECT name, address, salary INTO c_name, c_addr, c_sal
+   FROM customers
+  8    9     WHERE id = c_id;
+ 10     dbms_output.put_line
+ 11     ('Customer ' ||c_name || ' from ' || c_addr || ' earns ' || c_sal);
+ 12  END;
+ 13  /
+Customer Ramesh from Ahmedabad earns 2000
+
+PL/SQL procedure successfully completed.
+
+==============================================================================================================================
+
+
+SQL> DECLARE
+  2     message  varchar2(30):= 'That''s tutorialspoint.com!';
+  3  BEGIN
+  4     dbms_output.put_line(message);
+  5  END;
+  6  /
+That's tutorialspoint.com!
+
+PL/SQL procedure successfully completed.
+
+SQL>
+==============================================================================================================================
+
+SQL> DECLARE
+   i number(1);
+  2    3     j number(1);
+  4  BEGIN
+  5     << outer_loop >>
+  6     FOR i IN 1..3 LOOP
+  7        << inner_loop >>
+  8        FOR j IN 1..3 LOOP
+  9           dbms_output.put_line('i is: '|| i || ' and j is: ' || j);
+ 10        END loop inner_loop;
+ 11     END loop outer_loop;
+ 12  END;
+ 13  /
+i is: 1 and j is: 1
+i is: 1 and j is: 2
+i is: 1 and j is: 3
+i is: 2 and j is: 1
+i is: 2 and j is: 2
+i is: 2 and j is: 3
+i is: 3 and j is: 1
+i is: 3 and j is: 2
+i is: 3 and j is: 3
+
+PL/SQL procedure successfully completed.
+
+==============================================================================================================================
+
+DECLARE
+name varchar2(20);
+company varchar2(30);
+introduction clob;
+choice char(1);
+BEGIN
+name := 'John Smith';
+company := 'Infotech';
+introduction := ' Hello! I''m John Smith from Infotech.';
+choice := 'n';
+IF choice = 'y' THEN
+dbms_output.put_line(name);
+dbms_output.put_line(company);
+dbms_output.put_line(introduction);
+Else
+dbms_output.put_line('No output');
+END IF;
+END;
+/
+
+
+John Smith
+Infotech
+Hello! I'm John Smith from Infotech.
+
+PL/SQL procedure successfully completed.
+
+==============================================================================================================================
+
+
+DECLARE
+greetings varchar2(11) := 'hello world';
+BEGIN
+  dbms_output.put_line(UPPER(greetings));
+  
+  dbms_output.put_line(LOWER(greetings));
+  
+  dbms_output.put_line(INITCAP(greetings));
+  
+ /* retrieve the first character in the string */
+ dbms_output.put_line ( SUBSTR (greetings, 1, 1));
+ 
+ /* retrieve the last character in the string */
+ dbms_output.put_line ( SUBSTR (greetings, -1, 1));
+ 
+ /* retrieve five characters,
+ starting from the seventh position. */
+ dbms_output.put_line ( SUBSTR (greetings, 7, 5));
+ 
+ /* retrieve the remainder of the string,
+ starting from the second position. */
+ dbms_output.put_line ( SUBSTR (greetings, 2));
+ 
+ /* find the location of the first "e" */
+ dbms_output.put_line ( INSTR (greetings, 'e'));
+END;
+/
+
+HELLO WORLD
+hello world
+Hello World
+h
+d
+world
+ello world
+2
+
+PL/SQL procedure successfully completed.
+
+==============================================================================================================================
+
+
+SQL> DECLARE
+   greetings varchar2(30) := '..  2  ....Hello World.....';
+  3  BEGIN
+  4     dbms_output.put_line(RTRIM(greetings,'.'));
+  5     dbms_output.put_line(LTRIM(greetings, '.'));
+  6     dbms_output.put_line(TRIM( '.' from greetings));
+  7  END;
+  8  /
+......Hello World
+Hello World.....
+Hello World
+
+PL/SQL procedure successfully completed.
+
+
+==============================================================================================================================
+
+declare
+v_emp emp%rowtype;
+begin
+v_emp.empno:=7369;
+v_emp.ename:='SMITH';
+dbms_output.put_line('Emp details '||v_emp.empno || v_emp.ename);
+end;
+/
+
+PL/SQL procedure successfully completed.
+
+SQL> set serveroutput on;
+SQL> /
+Emp details 7369SMITH
+
+PL/SQL procedure successfully completed.
+
+==============================================================================================================================
+
+
+DECLARE 
+a NUMBER :=10;
+BEGIN
+dbms_output.put_line('Program started.' );
+IF( a > 100 ) THEN
+dbms_output.put_line('a is greater than 100'); 
+END IF;
+dbms_output.put_line('Program completed.');
+END;
+/
+
+Program started.
+Program completed.
+
+PL/SQL procedure successfully completed.
+
+
+
+
+DECLARE 
+a CHAR(1) :='u';
+BEGIN
+IF UPPER(a) in ('A','E','I','0','U' ) THEN 
+dbms_output.put_line('The character is in English Vowels');
+END IF;
+END;
+/
+
+The character is in English Vowels
+
+PL/SQL procedure successfully completed.
+
+
+==============================================================================================================================
+
+
+DECLARE 
+a NUMBER:=11;
+BEGIN
+dbms_output.put_line ('Program started');
+IF( mod(a,2)=0) THEN 
+dbms_output.put_line('a is even number'); 
+ELSE
+dbms_output.put_line('a is odd number'); 
+END IF;
+dbms_output.put_line ('Program completed.');
+END;
+/
+
+
+Program started
+a is odd number
+Program completed.
+
+PL/SQL procedure successfully completed.
+
+
+
+==============================================================================================================================
+
+
+
+DECLARE 
+a NUMBER :=10; 
+b NUMBER :=15; 
+c NUMBER :=20;
+BEGIN
+dbms_output.put_line('Program started.' );
+IF( a > b)THEN
+/*Nested-if l */
+	dbms_output.put_line('Checking Nested-IF 1'); 
+	IF( a > c ) THEN
+	dbms_output.put_line('A is greatest'); 
+	ELSE
+	dbms_output.put_line('C is greatest'); 
+	END IF;
+ELSE
+/*Nested-if2 */
+	dbms_output.put_line('Checking Nested-IF 2' ); 
+	IF( b > c ) THEN
+	dbms_output.put_line('B is greatest' ); 
+	ELSE
+	dbms_output.put_line('C is greatest' ); 
+	END IF;
+END IF;
+dbms_output.put_line('Program completed.' );
+END;
+/
+
+
+Program started.
+Checking Nested-IF 2
+C is greatest
+Program completed.
+
+PL/SQL procedure successfully completed.
+
+
+
+
+==============================================================================================================================

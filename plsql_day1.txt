@@ -1,0 +1,43 @@
+1.	PL/SQL is a programming language that combines both data manipulation and data processing power
+2.	It is used to store the business logic at database server side in the form of PL/SQL stored programs units
+3.	It is a block structured programming language
+
+PL/SQL means instructing the compiler 'what to do' through SQL and 'how to do' through its procedural way.
+
+Architecture of PL/SQL
+The PL/SQL architecture mainly consists of following three components:
+
+PL/SQL block
+PL/SQL Engine
+Database Server
+
+
+Following are the different type of PL/SQL units.
+Anonymous Block
+Function
+Library
+Procedure
+Package Body
+Package Specification
+Trigger
+Type
+Type Body
+
+
+
+declare
+a number:=100;
+begin
+dbms_output.put_line('the value of a is'||a);
+end;
+/
+
+
+DECLARE
+text VARCHAR2(25);
+BEGIN
+text:= ‘Hello World’;
+dbms_output.put_line (text);
+END:
+/
+

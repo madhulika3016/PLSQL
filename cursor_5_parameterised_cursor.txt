@@ -1,0 +1,312 @@
+set serveroutput on
+
+declare
+cursor c1(dd number, ss number default 2500) 
+is select * from emp
+where deptno=dd and sal>ss;
+begin
+for x in c1(10)
+loop
+dbms_output.put_line(x.ename||' '||x.sal);
+end loop;
+end;
+/
+
+KING 5000
+
+PL/SQL procedure successfully completed.
+
+========================================================
+
+declare
+cursor c1 is select ename, sal+100 salary from emp;
+y number;
+begin
+for x in c1
+loop
+dbms_output.put_line(x.ename||' '||x.salary);
+end loop;
+end;
+/
+
+
+SMITH 900
+ALLEN 1700
+WARD 1350
+JONES 3075
+MARTIN 1350
+BLAKE 2950
+CLARK 2550
+SCOTT 3100
+KING 5100
+TURNER 1600
+ADAMS 1200
+JAMES 1050
+FORD 3100
+MILLER 1400
+
+PL/SQL procedure successfully completed.
+
+================================================================
+
+declare
+cursor c1 is select ename, sal from emp;
+y number;
+begin
+for x in c1
+loop
+dbms_output.put_line(x.ename||' '||x.sal);
+end loop;
+end;
+/
+
+
+SMITH 800
+ALLEN 1600
+WARD 1250
+JONES 2975
+MARTIN 1250
+BLAKE 2850
+CLARK 2450
+SCOTT 3000
+KING 5000
+TURNER 1500
+ADAMS 1100
+JAMES 950
+FORD 3000
+MILLER 1300
+
+PL/SQL procedure successfully completed.
+
+========================================================
+
+declare
+cursor c1 is select ename name, sal*12 Annual_salary from emp;
+y number;
+begin
+for x in c1
+loop
+dbms_output.put_line(x.name||' '||x.Annual_salary);
+end loop;
+end;
+/
+
+
+SMITH 9600
+ALLEN 19200
+WARD 15000
+JONES 35700
+MARTIN 15000
+BLAKE 34200
+CLARK 29400
+SCOTT 36000
+KING 60000
+TURNER 18000
+ADAMS 13200
+JAMES 11400
+FORD 36000
+MILLER 15600
+
+PL/SQL procedure successfully completed.
+
+============================================================
+
+
+SQL> declare
+  2  cursor c1 is select ename name, sal*12 Annual_salary from emp;
+  3  y number;
+  4  begin
+  5  for x in c1
+  6  loop
+  7  dbms_output.put_line(x.name||' '||x.Annual_salary);
+  8  end loop;
+  9  end;
+ 10  /
+SMITH 9600
+ALLEN 19200
+WARD 15000
+JONES 35700
+MARTIN 15000
+BLAKE 34200
+CLARK 29400
+SCOTT 36000
+KING 60000
+TURNER 18000
+ADAMS 13200
+JAMES 11400
+FORD 36000
+MILLER 15600
+
+PL/SQL procedure successfully completed.
+
+======================================================================================
+
+declare
+cursor c1 is select lpad(ename, 10, '*') name, rpad(sal*12, 10, '$') Annual_salary from emp;
+y number;
+begin
+for x in c1
+loop
+dbms_output.put_line(x.name||' '||x.Annual_salary);
+end loop;
+end;
+/
+
+*****SMITH 9600$$$$$$
+*****ALLEN 19200$$$$$
+******WARD 15000$$$$$
+*****JONES 35700$$$$$
+****MARTIN 15000$$$$$
+*****BLAKE 34200$$$$$
+*****CLARK 29400$$$$$
+*****SCOTT 36000$$$$$
+******KING 60000$$$$$
+****TURNER 18000$$$$$
+*****ADAMS 13200$$$$$
+*****JAMES 11400$$$$$
+******FORD 36000$$$$$
+****MILLER 15600$$$$$
+
+PL/SQL procedure successfully completed.
+
+
+=============================================================================
+
+
+declare
+cursor c1 is
+select ename, dname from emp, dept where emp.deptno=dept.deptno;
+begin
+for x in c1 loop
+dbms_output.put_line(x.ename||' '|| x.dname);
+end loop;
+end;
+/
+
+
+CLARK ACCOUNTING
+KING ACCOUNTING
+MILLER ACCOUNTING
+JONES RESEARCH
+FORD RESEARCH
+ADAMS RESEARCH
+SMITH RESEARCH
+SCOTT RESEARCH
+WARD SALES
+TURNER SALES
+ALLEN SALES
+JAMES SALES
+BLAKE SALES
+MARTIN SALES
+
+PL/SQL procedure successfully completed.
+
+
+=============================================================================
+
+declare
+cursor c1 is select * from emp;
+begin
+for x in c1 loop
+if x.sal>2500 then update emp set sal=sal+100;
+dbms_output.put_line(x.ename||' '||x.sal);
+end if;
+end loop;
+end;
+/
+
+
+JONES 2975
+BLAKE 2850
+SCOTT 3000
+KING 5000
+FORD 3000
+
+PL/SQL procedure successfully completed.
+
+
+===========================================================
+
+declare 
+cursor c1 is select * from emp for update;
+begin
+for x in c1 loop
+if x.sal>2000 then 
+update emp set sal=sal+100 where current of c1;
+dbms_output.put_line(x.ename||' '||x.sal);
+end if;
+end loop;
+end;
+/
+
+ALLEN 2100
+JONES 3475
+BLAKE 3350
+CLARK 2950
+SCOTT 3500
+KING 5500
+FORD 3500
+
+PL/SQL procedure successfully completed.
+
+
+===================================================================
+
+declare 
+cursor c1 is select ename, sal, deptno from emp where deptno=20 for update;
+begin
+for x in c1 loop
+if x.sal>2000 then 
+update emp set sal=sal+100 where current of c1;
+dbms_output.put_line(x.ename||' '||x.sal||' '||x.deptno);
+end if;
+end loop;
+end;
+/
+
+
+SMITH 22300 20
+JONES 24575 20
+SCOTT 24600 20
+ADAMS 22600 20
+FORD 24600 20
+
+PL/SQL procedure successfully completed.
+
+====================================================================
+
+
+declare
+cursor c1 is
+select ename, dname , sal
+from emp, dept where emp.deptno=dept.deptno;
+begin
+for x in c1 loop
+if x.sal>2000 then update emp set sal=sal+1000;
+dbms_output.put_line(x.ename||' '|| x.dname||' '||x.sal);
+end if;
+end loop;
+end;
+/
+
+
+CLARK ACCOUNTING 10050
+KING ACCOUNTING 12600
+MILLER ACCOUNTING 8800
+JONES RESEARCH 10575
+FORD RESEARCH 10600
+ADAMS RESEARCH 8600
+SMITH RESEARCH 8300
+SCOTT RESEARCH 10600
+WARD SALES 8750
+TURNER SALES 9000
+ALLEN SALES 9200
+JAMES SALES 8450
+BLAKE SALES 10450
+MARTIN SALES 8750
+
+PL/SQL procedure successfully completed.
+
+
+===========================================================================
+

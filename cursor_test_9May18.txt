@@ -1,0 +1,82 @@
+Using implicite cursor display and insert the rows into temp table. Use any sql query.
+
+declare
+x number;
+begin
+update emp set sal=sal+1000 where deptno=20;
+if sql%found then
+x:=sql%rowcount;
+dbms_output.put_line(x||' abc '||systimestamp);
+insert into temp values(x, 'ABC', systimestamp);
+end if;
+end;
+/
+
+5 abc 09-MAY-18 09.29.22.123217000 AM +05:30
+
+PL/SQL procedure successfully completed.
+
+======================================================
+
+
+What is %FOUND and %ROWCOUNT? Explain with example.
+
+declare
+x number;
+begin
+insert into emp(empno, ename, sal) values(&id, '&nm', '&sal');
+if sql%found then 
+x:=sql%rowcount;
+dbms_output.put_line(x||' abc '||systimestamp);
+insert into temp values(x, 'ABC', systimestamp);
+end if;
+end;
+/
+
+Enter value for id: 8001
+Enter value for nm: Mike
+Enter value for sal: 8000
+old   4: insert into emp(empno, ename, sal) values(&id, '&nm', '&sal');
+new   4: insert into emp(empno, ename, sal) values(8001, 'Mike', '8000');
+1 abc 09-MAY-18 09.33.33.083465000 AM +05:30
+
+PL/SQL procedure successfully completed.
+
+
+SQL> select * from emp where ename='Mike';
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+---------- ---------- --------- ---------- --------- ---------- ----------
+    DEPTNO
+----------
+      8001 Mike                                            8000
+
+=====================================================================================
+
+
+Update the emp table. Check how many rows affected using cursor & display the count in the temp table.
+
+declare
+x number;
+begin
+update emp set sal=7000 where job='MANAGER';
+if sql%found then
+x:=sql%rowcount;
+dbms_output.put_line(x||' abc '||systimestamp);
+insert into temp values(x, 'ABC', systimestamp);
+end if;
+end;
+/
+
+3 abc 09-MAY-18 09.36.15.023198000 AM +05:30
+
+PL/SQL procedure successfully completed.
+
+SQL> select ename, job, sal from emp where job='MANAGER';
+
+ENAME      JOB              SAL
+---------- --------- ----------
+JONES      MANAGER         7000
+BLAKE      MANAGER         7000
+CLARK      MANAGER         7000
+

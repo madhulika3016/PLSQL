@@ -1,0 +1,46 @@
+--Collection Nested Table
+DECLARE
+TYPE my_nested_table IS TABLE OF number; 
+var_nt my_nested_table := my_nested_table (9,18,27,36,45,54,63,72,81,90); 
+BEGIN 
+FOR i IN 1..var_nt.COUNT
+LOOP
+DBMS_OUTPUT.PUT_LINE('Value stored at index '||i||'  is'||var_nt(i));
+END LOOP; 
+ END; 
+
+--VARRAY 
+
+DECLARE
+TYPE inBlock_vry IS VARRAY(5) OF NUMBER;
+vry_obj inBlock_vry := inBlock_vry(); 
+BEGIN
+FOR i IN 1..vry_obj.LIMIT 
+LOOP
+vry_obj.EXTEND;
+vry_obj(i) := 10*i; 
+DBMS_OUTPUT.PUT_LINE(vry_obj(i) ); 
+END LOOP;  
+END; 
+
+--ASSOCIATE ARRAY
+
+declare
+TYPE books IS TABLE OF NUMBER
+INDEX BY VARCHAR2(20); 
+isbn books;
+flag VARCHAR2(20); 
+BEGIN
+isbn('Oracle Database') := 1234; 
+isbn ('MySQL') := 9876; 
+isbn ('MySQL'):= 1010; 
+flag :=isbn.FIRST; 
+WHILE flag IS NOT NULL 
+LOOP
+DBMS_OUTPUT.PUT_LINE('Key -> '||flag||' Value -> '||isbn(flag));
+flag := isbn.NEXT(flag);
+END LOOP; 
+END; 
+
+
+

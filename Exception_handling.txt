@@ -1,0 +1,25 @@
+set serveroutput on;
+
+declare
+x number;
+begin
+select sal into x from emp where ename='scott';
+dbms_output.put_line(x);
+exception
+when too_many_rows then
+dbms_output.put_line('too many errors');
+end;
+/
+
+
+
+declare
+x number;
+begin
+select sal into x from emp where ename='scott';
+dbms_output.put_line(x);
+exception
+when no_data_found then
+dbms_output.put_line('No data found');
+end;
+/
