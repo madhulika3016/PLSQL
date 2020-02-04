@@ -1,0 +1,21 @@
+Using NOCOPY hint ▪ Using  PARALLEL_ENABLE hint ▪ Using  Cross-session PL/SQL function ▪ Using DETERMINISTIC clause ▪ Using  returning clause
+
+he following outlines the determinism of a function:
+A function is considered deterministic if it always returns the same result set when it's called with the same set of input values.
+A function is considered nondeterministic if it doesn't return the same result set when it's called with the same set of input values.
+
+NO COPY HINT
+
+The NOCOPY hint tells the PL/SQL compiler to pass OUT and IN OUT parameters by reference, rather than by value. When parameters are passed by value, the contents of the OUT and IN OUT parameters are copied to temporary variables, which are then used by the subprogram being called.
+
+Parallel DML ( PARALLEL INSERT , UPDATE , DELETE , and MERGE ) uses parallel execution mechanisms to speed up or scale up large DML operations against large database tables and indexes.
+
+he PARALLEL enable hint is used only for operations on tables. You can use it to parallelize queries and DML statements (INSERT, UPDATE, and DELETE). The PARALLEL_INDEX hint parallelizes an index range scan of a partitioned index. (In an index operation, the PARALLEL hint is not valid and is ignored.)
+
+Returning
+
+The returning clause specifies the values return from DELETE , EXECUTE IMMEDIATE , INSERT , and UPDATE statements. You can retrieve the column values into individual variables or into collections. You cannot use the RETURNING clause for remote or parallel deletes.
+
+Cross-Session
+
+The cross-session PL/SQL function result cache provides a simple way to boost the performance of PL/SQL functions by saving the results of function calls for specific combinations of input parameters in the SGA. These results can be reused by any session calling the same function with the same parameters.
