@@ -1,0 +1,158 @@
+PRAGMA
+
+Signifies that the statement is a pragma (compiler directive). Pragmas are processed at compile time, not at run time. They pass information to the compiler.
+
+Usage Notes
+
+You can apply this pragma to:
+
+Top-level (not nested) anonymous PL/SQL blocks
+
+Local, standalone, and packaged functions and procedures
+
+Methods of a SQL object type
+
+Database triggers
+
+You cannot apply this pragma to an entire package or an entire an object type. Instead, you can apply the pragma to each packaged subprogram or object method.
+
+You can code the pragma anywhere in the declarative section. For readability, code the pragma at the top of the section.
+
+Once started, an autonomous transaction is fully independent. It shares no locks, resources, or commit-dependencies with the main transaction. You can log events, increment retry counters, and so on, even if the main transaction rolls back.
+
+Unlike regular triggers, autonomous triggers can contain transaction control statements such as COMMIT and ROLLBACK, and can issue DDL statements (such as CREATE and DROP) through the EXECUTE IMMEDIATE statement.
+
+Changes made by an autonomous transaction become visible to other transactions when the autonomous transaction commits. The changes also become visible to the main transaction when it resumes, but only if its isolation level is set to READ COMMITTED (the default). If you set the isolation level of the main transaction to SERIALIZABLE, changes made by its autonomous transactions are not visible to the main transaction when it resumes.
+
+In the main transaction, rolling back to a savepoint located before the call to the autonomous subprogram does not roll back the autonomous transaction. Remember, autonomous transactions are fully independent of the main transaction.
+
+If an autonomous transaction attempts to access a resource held by the main transaction (which cannot resume until the autonomous routine exits), a deadlock can occur. Oracle raises an exception in the autonomous transaction, which is rolled back if the exception goes unhandled.
+
+If you try to exit an active autonomous transaction without committing or rolling back, Oracle raises an exception. If the exception goes unhandled, or if the transaction ends because of some other unhandled exception, the transaction is rolled back.
+
+
+--Bulk Collect
+
+--select into
+
+declare
+type bk_tb is table of varchar2(20);
+empname bk_tb;
+begin
+select ename bulk collect into empname from emp2 ;
+
+for i in 1..empname.count
+loop
+dbms_output.put_line(i||'-'||empname(i));
+end loop;
+end;
+
+--fetch bulk collect
+
+declare
+ cursor e_cur is select ename from emp2 ;
+ type mytab is table of varchar2(20);
+ myvar mytab;
+ begin
+ open e_cur;
+ loop
+ fetch e_cur bulk collect into myvar;
+ exit when myvar.count=0;
+ for i in myvar.first..myvar.last
+ loop
+ dbms_output.put_line(i||'  '||myvar(i));
+ end loop;
+ end loop;
+ close e_cur;
+ end;
+ 
+
+--for all example
+
+CREATE TABLE student123(
+sid NUMBER (5)
+);
+
+DECLARE
+TYPE My_Array IS TABLE OF NUMBER INDEX BY PLS_INTEGER; 
+col_var My_Array;
+tot_rec NUMBER; 
+BEGIN
+-- Populate the collection 
+FOR i IN 1..10 
+LOOP
+col_var (i) := 9*i; 
+END LOOP;
+FORALL idx IN 1..10
+INSERT INTO student123(sid) VALUES (col_var(idx));
+SELECT count(*) INTO tot_rec FROM student123;
+DBMS_OUTPUT.PUT_LINE('Total records inserted are '||tot_rec); 
+END;
+
+--for all delete
+CREATE TABLE emp_temp AS SELECT * FROM emp2;
+DECLARE
+TYPE NumList IS VARRAY(20) OF NUMBER;
+depts NumList := NumList(10, 20, 30,50); -- department numbers
+BEGIN
+FORALL i IN depts.FIRST..depts.LAST
+DELETE FROM emp_temp WHERE deptno = depts(i);
+COMMIT;
+END; 
+ 
+ select * from emp2;
+ select * from emp_temp;
+ 
+ drop table emp_temp;
+ 
+--Pragma Autonomous Transaction
+
+DECLARE
+   salary   NUMBER;
+   PROCEDURE nested_block IS
+   PRAGMA autonomous_transaction;
+    BEGIN
+     UPDATE emp2 SET sal = sal + 15000 WHERE empno = 1002;
+   COMMIT;
+   END;
+BEGIN
+   SELECT sal INTO salary FROM emp2 WHERE empno = 1003;
+  dbms_output.put_line('Before Salary of 1003 is'|| salary);
+   SELECT sal INTO salary FROM emp2 where empno = 1002;
+   dbms_output.put_line('Before Salary of 1002 is'|| salary);         
+  UPDATE emp2 SET sal = sal + 5000 WHERE empno = 1003;
+  nested_block;
+  ROLLBACK;
+ SELECT sal INTO  salary FROM emp2 WHERE empno = 1003;
+ dbms_output.put_line('After Salary of 1003 is'|| salary);
+ SELECT sal INTO salary FROM emp2 WHERE empno = 1002;
+dbms_output.put_line('After Salary of 1002 is '|| salary);
+end;
+
+CREATE PACKAGE pkg2 aS 
+PRAGMA SERIALLY_REUSABLE; 
+num NUMBER := 0; 
+PROCEDURE init_pkg_state(n NUMBER); 
+PROCEDURE print_pkg_state;
+END pkg2; 
+
+CREATE PACKAGE BODY pkg2 IS 
+PRAGMA SERIALLY_REUSABLE; 
+PROCEDURE init_pkg_state(n NUMBER) IS 
+BEGIN 
+pkg2.num := n;
+END; 
+PROCEDURE print_pkg_state IS 
+BEGIN 
+DBMS_OUTPUT.PUT_LINE('Num: ' || pkg2.num); 
+END;
+END pkg2;
+
+
+execute pkg2.init_pkg_state(12);
+execute pkg2.print_pkg_state;
+
+begin
+pkg2.init_pkg_state(12);
+pkg2.print_pkg_state;
+end;
