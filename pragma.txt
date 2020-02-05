@@ -156,3 +156,63 @@ begin
 pkg2.init_pkg_state(12);
 pkg2.print_pkg_state;
 end;
+
+--pragma restrict -refferences
+CREATE TABLE debug_output(msg VARCHAR2(200));
+
+CREATE or replace PACKAGE debugging AS 
+FUNCTION log_msg (msg VARCHAR2) RETURN VARCHAR2;
+--PRAGMA RESTRICT_REFERENCES(log_msg, WNDS, RNDS); 
+END debugging; 
+
+CREATE or replace PACKAGE BODY debugging AS 
+FUNCTION log_msg (msg VARCHAR2) 
+RETURN VARCHAR2 IS 
+
+--PRAGMA AUTONOMOUS_TRANSACTION; 
+BEGIN 
+-- the following insert does not violate the constraint -- WNDS because this is an autonomous routine 
+INSERT INTO debug_output VALUES(msg); 
+--COMMIT; 
+RETURN msg;
+END; 
+END debugging; 
+
+DECLARE 
+my_emp_id NUMBER(6); 
+myname VARCHAR2(25); 
+my_count NUMBER; 
+BEGIN 
+my_emp_id := 1003; 
+SELECT debugging.log_msg(ename) INTO myname FROM emp2 WHERE empno = my_emp_id;
+-- even if you roll back in this scope, the insert into 'debug_output' remains -- committed because it is part of an autonomous transaction 
+
+SYS.DBMS_OUTPUT.PUT_LINE(myname);
+ROLLBACK; 
+END; 
+
+select * from debug_output;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
